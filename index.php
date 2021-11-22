@@ -30,6 +30,7 @@
         }
         .igContainer{
             position: fixed;
+            top: 0;
         }
     </style>
 </head>
