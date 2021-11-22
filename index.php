@@ -13,21 +13,23 @@
             margin-bottom: 12px;
         }
 
-
-        .profile-avatar .avatar img{
+        .profile-avatar .avatar img {
             border-radius: 50%;
             border: 2px solid red;
         }
 
-        .form{
+        .form {
             margin-bottom: 24px;
         }
 
-        .footer{
+        .footer {
             position: fixed;
             bottom: 12px;
             right: 12px;
             text-align: right;
+        }
+        .igContainer{
+            position: fixed;
         }
     </style>
 </head>
@@ -99,41 +101,111 @@
 
             });
 
-            this.on("complete", function(file) {
-                    data = JSON.parse(file.xhr.response);
-                    generateTable(1, 20, true);
+            this.on("complete", function (file) {
+                data = JSON.parse(file.xhr.response);
+                generateTable(1, 20, true);
             })
 
-            this.on('error', function(){
+            this.on('error', function () {
                 alert('Please upload ' + currentAsset + ' only.');
             });
 
         }
     });
 
-    function generateTable(page, offset = 10, init = false){
+    function generateTable(page, offset = 10, init = false) {
         $data = paginate(data, offset, page)
 
         $html = '';
-        $.each($data, function(i, d){
-            $html += '<tr data-index="'+i+'">';
-            $html += '<td class="td-mark" data-index="'+i+'"></td>';
-            $html += '<td class="td-handle" data-handle="'+d.igUsername+'" id="'+d.igUsername+'">'+d.igUsername+'</td>';
-            $html += '<td class="" data-handle="'+d.noFollowers+'">'+d.noFollowers+'</td>';
+        $containerHtml = '';
+        $.each($data, function (i, d) {
+            $html += '<tr data-index="' + i + '">';
+            $html += '<td class="td-mark" data-index="' + i + '"></td>';
+            $html += '<td class="td-handle" data-handle="' + d.igUsername + '" id="' + d.igUsername + '" data-userid="' + d.userid + '">' + d.igUsername + '</td>';
+            $html += '<td class="" data-handle="' + d.noFollowers + '">' + d.noFollowers + '</td>';
             $html += '</tr>';
+
+
+            if (init == true) {
+                if (i == 0) {
+                    $dnone = '';
+                } else {
+                    $dnone = 'd-none';
+                }
+            } else {
+                $dnone = 'd-none';
+            }
+            $containerHtml += '<div id="' + d.userid + '" class="igContainer ' + $dnone + '"><div class="profile-avatar"></div><div class="timeline-container row"></div></div>';
         });
 
         $('#ig-table-body').append($html);
+        $('#profile-container').append($containerHtml);
 
-        if(init == true){
+
+        const forLoopProfile = async _ => {
+            for (var p = 0; p < $data.length; p++){
+                $rsp = await generateIgViewPreLoad($data[p].igUsername);
+                $('#' + $user.id + ' .profile-avatar').html('<div class="avatar"><img src="' + $rsp + '"></div>');
+                await generateIgViewPreLoadTimeline($data[p].userid)
+            }
+        }
+
+        forLoopProfile();
+
+        // $.each($data, async function (i, d) {
+        //     $rsp = await generateIgViewPreLoad(d.igUsername);
+        //     $('#' + $user.id + ' .profile-avatar').html('<div class="avatar"><img src="' + $rsp + '"></div>');
+        //     console.log($rsp);
+        //     // await generateIgViewPreLoadTimeline(d.userid);
+        // });
+
+        if (init == true) {
             selectText($data[0]['igUsername']);
-            generateIgView($data[0]['igUsername']);
+            // generateIgView($data[0]['igUsername'], true);
         }
 
         currentPage = page + 1;
     }
 
-    async function generateIgView($handle){
+    var timeLines = [];
+
+    async function generateIgViewPreLoad($handle) {
+        return new Promise(async function (resolve, reject) {
+            $rsp = await
+                getProfileData($handle);
+            $json = JSON.parse($rsp);
+            $user = $json.graphql.user;
+            $img = await
+                getImage([$user.profile_pic_url]);
+            $img = JSON.parse($img);
+
+
+            $timelines = $user.edge_owner_to_timeline_media.edges.slice(0, 9);
+            timeLines[$user.id] = $timelines;
+
+            resolve($img[0]);
+        });
+
+
+    }
+
+    async function generateIgViewPreLoadTimeline($userid) {
+
+        $timelines = timeLines[$userid];
+
+        $thumbsArr = [];
+        $.each($timelines, async function (i, p) {
+            $thumbs = await getImage([p.node.thumbnail_src]);
+            $thumbs = JSON.parse($thumbs);
+            $.each($thumbs, function (i, val) {
+                $('#' + $userid + ' .timeline-container').append('<div class="col-md-4"><img src="' + val + '" class="img-thumbnail"></div>');
+            });
+        });
+
+
+    }
+
+    async function generateIgView($handle) {
         $('#profile-container .profile-avatar').html('Loading...');
         $('#profile-container .timeline-container').html('Loading...');
         $rsp = await getProfileData($handle);
@@ -145,50 +217,45 @@
 
         $img = await getImage([$user.profile_pic_url]);
         $img = JSON.parse($img);
-        $html += '<div class="avatar"><img src="'+$img[0]+'"></div>';
+        $html += '<div class="avatar"><img src="' + $img[0] + '"></div>';
 
         $('#profile-container .profile-avatar').html($html);
 
         $timelines = $user.edge_owner_to_timeline_media.edges.slice(0, 9);
 
         $thumbsArr = [];
-        $.each($timelines, async function(i, p){
-            $thumbsArr.push(p.node.thumbnail_src);
-        });
 
-
-        $thumbs = await getImage($thumbsArr);
         $('#profile-container .timeline-container').html('');
-        $thumbs = JSON.parse($thumbs);
-        $.each($thumbs, function(i, val){
-            $('#profile-container .timeline-container').append('<div class="col-md-4"><img src="'+val+'" class="img-thumbnail"></div>');
+        $.each($timelines, async function (i, p) {
+            $thumbs = await getImage([p.node.thumbnail_src]);
+            $thumbs = JSON.parse($thumbs);
+            $.each($thumbs, function (i, val) {
+                $('#profile-container .timeline-container').append('<div class="col-md-4"><img src="' + val + '" class="img-thumbnail"></div>');
+            });
         });
-
-
-
     }
 
 
-    function getProfileData($handle){
+    function getProfileData($handle) {
         return new Promise(function (resolve, reject) {
             var settings = {
-                "url": "fetch.php?user="+$handle,
+                "url": "fetch.php?user=" + $handle,
                 "method": "GET",
                 "timeout": 0,
                 beforeSend: function () {
-                    if (currentRequest != null) {
-                        currentRequest.abort();
-                    }
+                    // if (currentRequest != null) {
+                    //     currentRequest.abort();
+                    // }
                 }
             };
 
-            currentRequest =  $.ajax(settings).done(function (response) {
+            $.ajax(settings).done(function (response) {
                 resolve(response);
             });
         });
     }
 
-    async function getImage($imageUrl){
+    async function getImage($imageUrl) {
         return new Promise(function (resolve, reject) {
             var settings = {
                 "url": "fetch-image",
@@ -198,16 +265,16 @@
                     "imageUrl": $imageUrl
                 },
                 beforeSend: function () {
-                    if (currentRequest != null) {
-                        currentRequest.abort();
-                    }
+                    // if (currentRequest != null) {
+                    //     currentRequest.abort();
+                    // }
                 },
                 success: function (data) {
                     resolve(data);
                 }
             };
 
-            currentRequest = $.ajax(settings);
+            $.ajax(settings);
 
         });
     }
@@ -240,25 +307,30 @@
     }
 
 
-    function moveTarget(action){
+    function moveTarget(action) {
         var row = currentElem.parentNode;
-        if(action == 'down'){
+        if (action == 'down') {
             var nextElem = row.nextSibling.querySelectorAll(".td-handle");
-            if(nextElem){
+            if (nextElem) {
                 var nextId = nextElem[0].id
+                var nextUserid = nextElem[0].dataset.userid;
             }
-        }else{
+        } else {
             var prevElem = row.previousSibling.querySelectorAll(".td-handle");
-            if(prevElem){
+            if (prevElem) {
                 var nextId = prevElem[0].id
+                var nextUserid = prevElem[0].dataset.userid;
             }
         }
 
         selectText(nextId);
-        generateIgView(nextId);
+
+        $('.igContainer').addClass('d-none');
+        $('#' + nextUserid).removeClass('d-none');
+        // generateIgView(nextId);
     }
 
-    function markTarget(mark){
+    function markTarget(mark) {
         var row = currentElem.parentNode;
         var elem = row.querySelectorAll(".td-mark");
         elem[0].innerHTML = mark;
@@ -296,39 +368,39 @@
     }
 
     $(document).ready(function () {
-        $('.btn-actions').click(function(){
+        $('.btn-actions').click(function () {
             console.log(data);
-           $action = $(this).attr('data-action');
-           if($action != 'delete'){
-               var settings = {
-                   "url": "export.php",
-                   "method": "POST",
-                   "timeout": 0,
-                   "data": {
-                       "data": markData,
-                       "action": $action,
-                       "execute": 'save'
-                   },
-                   success: function (data) {
-                       window.open('export.php?export=1&action='+$action);
-                   }
-               };
+            $action = $(this).attr('data-action');
+            if ($action != 'delete') {
+                var settings = {
+                    "url": "export.php",
+                    "method": "POST",
+                    "timeout": 0,
+                    "data": {
+                        "data": markData,
+                        "action": $action,
+                        "execute": 'save'
+                    },
+                    success: function (data) {
+                        window.open('export.php?export=1&action=' + $action);
+                    }
+                };
 
-               $.ajax(settings);
-           }else{
-               var txt;
-               var r = confirm("Are you sure do you want to delete data?");
-               if (r == true) {
-                   $('#ig-table-body').empty();
-                   myDropzone.removeAllFiles(true);
-               } else {
+                $.ajax(settings);
+            } else {
+                var txt;
+                var r = confirm("Are you sure do you want to delete data?");
+                if (r == true) {
+                    $('#ig-table-body').empty();
+                    myDropzone.removeAllFiles(true);
+                } else {
 
-               }
-           }
+                }
+            }
 
         });
     });
-    $(window).on('scroll', function() {
+    $(window).on('scroll', function () {
         if ($(window).scrollTop() >= $('body').offset().top + $('body').outerHeight() - window.innerHeight) {
             generateTable(currentPage, offset = 20);
         }
