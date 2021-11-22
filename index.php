@@ -258,7 +258,7 @@
     async function getImage($imageUrl) {
         return new Promise(function (resolve, reject) {
             var settings = {
-                "url": "fetch-image",
+                "url": "fetch-image.php",
                 "method": "POST",
                 "timeout": 0,
                 "data": {
