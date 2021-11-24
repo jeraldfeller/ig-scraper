@@ -1,7 +1,7 @@
 <?php
 $user = $_GET['user'];
 $curl = curl_init();
-$cookie = 'ig_did=A270B776-25FA-492E-BCA1-77D57AB9F23D; ig_nrcb=1; mid=YZxAwwALAAFeLy-beZIpqMYjf7oy; csrftoken=WhJWMNDR478Z8W5JdsSXr7t1YN4wXzw3; ds_user_id=50693370883; sessionid=50693370883%3AnEeNEy7PN862uW%3A16; rur="VLL\05450693370883\0541669166750:01f74af431acfe8f9e9b5a79148d1af84bdbaf781a3e0db951509116cf6cab02c95cb307"';
+$cookie = 'ig_did=A270B776-25FA-492E-BCA1-77D57AB9F23D; ig_nrcb=1; mid=YZxAwwALAAFeLy-beZIpqMYjf7oy; csrftoken=WhJWMNDR478Z8W5JdsSXr7t1YN4wXzw3; ds_user_id=50693370883; sessionid=50693370883%3AnEeNEy7PN862uW%3A16; rur="VLL\05450693370883\0541669166750:01f74af431acfe8f9e9b5a79148d1af84bdbaf781a3e0db951509116cf6cab02c95cb307"   ';
 curl_setopt_array($curl, array(
     CURLOPT_URL => 'https://www.instagram.com/'.$user.'/?__a=1',
     CURLOPT_RETURNTRANSFER => true,

@@ -136,22 +136,29 @@
             } else {
                 $dnone = 'd-none';
             }
-            $containerHtml += '<div id="' + d.userid + '" class="igContainer ' + $dnone + '"><div class="profile-avatar"></div><div class="timeline-container row"></div></div>';
+            $containerHtml += '<div id="' + d.userid + '" class="igContainer ' + $dnone + '">';
+            $containerHtml += '<div class="profile-avatar"><div class="avatar"><img src="' + d.profileImg + '"></div></div>';
+            $containerHtml += '<div class="timeline-container row">';
+            $.each(d.timelines, function (i, val) {
+                $containerHtml += '<div class="col-md-4"><img src="' + val + '" class="img-thumbnail"></div>';
+            });
+            $containerHtml += '</div>';
+            $containerHtml += '</div>';
         });
 
         $('#ig-table-body').append($html);
         $('#profile-container').append($containerHtml);
 
 
-        const forLoopProfile = async _ => {
-            for (var p = 0; p < $data.length; p++){
-                $rsp = await generateIgViewPreLoad($data[p].igUsername);
-                $('#' + $user.id + ' .profile-avatar').html('<div class="avatar"><img src="' + $rsp + '"></div>');
-                await generateIgViewPreLoadTimeline($data[p].userid)
-            }
-        }
-
-        forLoopProfile();
+        // const forLoopProfile = async _ => {
+        //     for (var p = 0; p < $data.length; p++){
+        //         $rsp = await generateIgViewPreLoad($data[p].igUsername);
+        //         $('#' + $user.id + ' .profile-avatar').html('<div class="avatar"><img src="' + $rsp + '"></div>');
+        //         await generateIgViewPreLoadTimeline($data[p].userid)
+        //     }
+        // }
+        //
+        // forLoopProfile();
 
         // $.each($data, async function (i, d) {
         //     $rsp = await generateIgViewPreLoad(d.igUsername);
