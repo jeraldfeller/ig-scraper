@@ -1,7 +1,12 @@
 <?php
 $user = $_GET['user'];
 $curl = curl_init();
-$cookie = 'ig_did=A270B776-25FA-492E-BCA1-77D57AB9F23D; ig_nrcb=1; mid=YZxAwwALAAFeLy-beZIpqMYjf7oy; csrftoken=WhJWMNDR478Z8W5JdsSXr7t1YN4wXzw3; ds_user_id=50693370883; sessionid=50693370883%3AnEeNEy7PN862uW%3A16; rur="VLL\05450693370883\0541669166750:01f74af431acfe8f9e9b5a79148d1af84bdbaf781a3e0db951509116cf6cab02c95cb307"';
+$cookie = [
+  'ig_did=17297759-4AF2-4F21-9F7C-40F534683042; ig_nrcb=1; mid=YZ7hdwALAAEF-JLu8ETAmt9udiRN; csrftoken=oVloZ4DZsRtWgsl72SeFKn7J7DLE7FLD; ds_user_id=50340100186; sessionid=50340100186%3AAHpt6wva9Vlj2M%3A26; rur="FRC\05450340100186\0541669338613:01f7fd4ab9cab5b5cf22bf8e3fa76039dd8150b794595787cdff0a216d1aac4f8be60551"',
+  'ig_did=7A58808F-1FC8-413D-A82A-4A3FDDD29D53; ig_nrcb=1; mid=YZ7miQALAAFW72J3hbIcLTdIPumb; csrftoken=7knUBk3wT5yzoEbhzAIyuEK1LCJ4u54R; ds_user_id=50517850211; sessionid=50517850211%3A4utnY8iL05IqYG%3A0; rur="ATN\05450517850211\0541669340211:01f72197fc618f2432111858c503a51183838dff757026868aa12ed14eb651e87246c804"'
+];
+
+$cookie = $cookie[rand(0, 1)];
 curl_setopt_array($curl, array(
     CURLOPT_URL => 'https://www.instagram.com/'.$user.'/?__a=1',
     CURLOPT_RETURNTRANSFER => true,

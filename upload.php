@@ -28,9 +28,8 @@ while (($data = fgetcsv($fileHandle, 10000, ",")) !== FALSE) {
         'country' => $data[10],
         'reason' => $data[11],
         'avatar' => $data[12],
-        'transferred' => $data[3]
+        'transferred' => $data[13]
     ];
-
 }
 
 $_SESSION['data'] = $lists;

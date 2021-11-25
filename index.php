@@ -35,7 +35,16 @@
     </style>
 </head>
 <body>
-
+<div class="overlay d-none" style="
+    height: 100vh;
+    position: absolute;
+    background: rgba(0,0,0, .2);
+    width: 100%;
+    z-index: 99999;
+    text-align: center;
+    padding-top: 60px;
+">Loading Data....
+</div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -104,7 +113,12 @@
 
             this.on("complete", function (file) {
                 data = JSON.parse(file.xhr.response);
-                generateTable(1, 20, true);
+                $('.overlay').removeClass('d-none');
+                generateTable(1, 40, true);
+
+                setTimeout(function(){
+                    $('.overlay').addClass('d-none');
+                }, 40000)
             })
 
             this.on('error', function () {
@@ -113,6 +127,8 @@
 
         }
     });
+
+    var loading = true;
 
     function generateTable(page, offset = 10, init = false) {
         $data = paginate(data, offset, page)
@@ -403,7 +419,7 @@
     });
     $(window).on('scroll', function () {
         if ($(window).scrollTop() >= $('body').offset().top + $('body').outerHeight() - window.innerHeight) {
-            generateTable(currentPage, offset = 20);
+            generateTable(currentPage, 40);
         }
     });
 </script>
