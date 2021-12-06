@@ -282,6 +282,15 @@ class Model
         $pdo = null;
     }
 
+    public function deleteImportedDataBlog()
+    {
+        $pdo = $this->getPdo();
+        $sql = "DELETE FROM ig_blob";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $pdo = null;
+    }
+
     public function importData($data)
     {
         $pdo = $this->getPdo();
