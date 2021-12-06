@@ -9,7 +9,7 @@ const https = require('https');
         setTimeout(async function () {
             var email =  await driver.findElement(By.name('username')).sendKeys('sub10.jeraldfeller@gmail.com', Key.RETURN);
             var password =  await driver.findElement(By.name('password')).sendKeys('dfab7c358', Key.RETURN);
-
+            driver.wait(until.elementIsVisible)
             setTimeout(async function () {
                 var i = 0;
                 while(i < 100000){
@@ -96,3 +96,5 @@ async function scanData(driver){
     });
 
 }
+
+

@@ -1,9 +1,10 @@
 <?php
-ob_start();
-session_start();
+include "Model/Init.php";
+include "Model/Model.php";
+$model = new Model();
 if(isset($_GET['export'])){
     $action = $_GET['action'];
-    $data = $_SESSION['data'];
+    $data = $model->getImportData(0, $action, -1);
     $delimiter = ",";
     $filename = "$action" . date('Y-m-d-H-i-s') . ".csv";
 
@@ -15,27 +16,23 @@ if(isset($_GET['export'])){
     $lineData = array('Numbering', 'VEHLA APPROVE?', 'IG USERNAME', 'Approved', 'USERID', 'VERIFIED', '# FOLLOWERS', '# FOLLWED', 'EMAIL', 'FULL NAME', 'Country', 'Reason', 'AVATAR' ,'Transferred');
     fputcsv($f, $lineData, $delimiter);
     foreach($data as $row){
-        if(isset($row['mark'])){
-            if($action == strtolower($row['mark'])){
-                $lineData = array(
-                    $row['numbering'],
-                    $row['vehlaApproved'],
-                    $row['igUsername'],
-                    $row['approved'],
-                    $row['userid'],
-                    $row['veri'],
-                    $row['noFollowers'],
-                    $row['noFollowed'],
-                    $row['email'],
-                    $row['fullName'],
-                    $row['country'],
-                    $row['reason'],
-                    $row['avatar'],
-                    $row['transferred']
-                );
-                fputcsv($f, $lineData, $delimiter);
-            }
-        }
+        $lineData = array(
+            $row['numbering'],
+            $row['vehlaApproved'],
+            $row['igUsername'],
+            $row['approved'],
+            $row['userid'],
+            $row['verified'],
+            $row['noFollowers'],
+            $row['noFollowed'],
+            $row['email'],
+            $row['fullName'],
+            $row['country'],
+            $row['reason'],
+            $row['avatar'],
+            $row['transferred']
+        );
+        fputcsv($f, $lineData, $delimiter);
         $i++;
     }
 
