@@ -222,6 +222,15 @@ class Model
         $pdo = null;
     }
 
+    public function updateCookieApp($id, $bol)
+    {
+        $pdo = $this->getPdo();
+        $sql = "UPDATE ig_cookies_app SET active = $bol WHERE id = $id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $pdo = null;
+    }
+
     public function updateLastUsed($id, $bol, $reset = false)
     {
         $pdo = $this->getPdo();
