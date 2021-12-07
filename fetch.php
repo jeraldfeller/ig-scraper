@@ -60,6 +60,9 @@ foreach($data as $row){
             'type' => 'timeline'
         ]);
     }
+
+
+    sleep(1);
 }
 curl_close($curl);
 
