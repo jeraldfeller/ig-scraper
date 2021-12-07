@@ -62,7 +62,7 @@ foreach($data as $row){
             ]);
         }
     }else{
-        $this->updateCookie($cookieData['id'], 0);
+        $model->updateCookie($cookieData['id'], 0);
     }
 
 
