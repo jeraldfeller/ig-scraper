@@ -182,7 +182,7 @@ class Model
     {
         $pdo = $this->getPdo();
 //        $sql = "SELECT id, cookie, user FROM `ig_cookies` WHERE active = 1 AND last_used = 0 ORDER BY RAND()";
-        $sql = "SELECT id, cookie, user FROM `ig_cookies` WHERE active = 1  ORDER BY RAND()";
+        $sql = "SELECT id, cookie, user FROM `ig_cookies` WHERE active = 1  AND last_used = 0 ORDER BY RAND()";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $result = '';
@@ -199,7 +199,7 @@ class Model
     public function getCookieApp()
     {
         $pdo = $this->getPdo();
-        $sql = "SELECT id, cookie, user FROM `ig_cookies_app` WHERE active = 1  ORDER BY RAND()";
+        $sql = "SELECT id, cookie, user FROM `ig_cookies_app` WHERE active = 1 AND last_used = 0 ORDER BY RAND()";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $result = '';
