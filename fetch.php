@@ -41,25 +41,31 @@ foreach($data as $row){
 
     $rsp = json_decode($response, true);
 
-    $userData = $rsp['graphql']['user'];
-    $profilePic = $userData['profile_pic_url'];
+    if($rsp){
+        $userData = $rsp['graphql']['user'];
+        $profilePic = $userData['profile_pic_url'];
 
-    $model->inserInfo('ig_blob', [
-        'ig_id' => $row['id'],
-        'blob_data' => $model->getImage($profilePic),
-        'type' => 'avatar'
-    ]);
-
-    $userPosts =  array_slice($userData['edge_owner_to_timeline_media']['edges'], 0, 9);
-
-    $latestPostImages = [];
-    for($i = 0; $i < count($userPosts); $i++){
         $model->inserInfo('ig_blob', [
             'ig_id' => $row['id'],
-            'blob_data' => $model->getImage($userPosts[$i]['node']['display_url']),
-            'type' => 'timeline'
+            'blob_data' => $model->getImage($profilePic),
+            'type' => 'avatar'
         ]);
+
+        $userPosts =  array_slice($userData['edge_owner_to_timeline_media']['edges'], 0, 9);
+
+        $latestPostImages = [];
+        for($i = 0; $i < count($userPosts); $i++){
+            $model->inserInfo('ig_blob', [
+                'ig_id' => $row['id'],
+                'blob_data' => $model->getImage($userPosts[$i]['node']['display_url']),
+                'type' => 'timeline'
+            ]);
+        }
+    }else{
+        $this->updateCookie($cookieData['id'], 0);
     }
+
+
 
 
     sleep(1);
