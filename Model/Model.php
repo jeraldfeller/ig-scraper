@@ -304,20 +304,13 @@ class Model
     {
         $pdo = $this->getPdo();
         $sql = "INSERT INTO imported_data SET 
-                numbering = " . $data['numbering'] . ",
-                vehlaApproved = '" . $data['vehlaApproved'] . "',
                 igUsername = '" . $data['igUsername'] . "',
-                approved = '" . $data['approved'] . "',
-                userid = " . $data['userid'] . ",
                 verified = '" . $data['veri'] . "',
                 noFollowers = " . $data['noFollowers'] . ",
                 noFollowed = " . $data['noFollowed'] . ",
                 email = '" . $data['email'] . "',
                 fullName = '" . $data['fullName'] . "',
-                country = '" . $data['country'] . "',
-                reason = '" . $data['reason'] . "',
-                avatar = '" . $data['avatar'] . "',
-                transferred = '" . $data['transferred'] . "'
+                avatar = '" . $data['avatar'] . "'
                ";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();

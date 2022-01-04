@@ -13,6 +13,7 @@ $following = $model->getFollowingToScan('ASC');
 
 $model->setActiveScanCount('+1');
 $i = 1;
+
 foreach($following as $row){
     $id = $row['id'];
     $handle = $row['handle'];
@@ -34,7 +35,7 @@ foreach($following as $row){
         $user = $rsp['graphql']['user'];
     }
 
-
+    $userPosts =  array_slice($user['edge_owner_to_timeline_media']['edges'], 0, 9);
 
     if(!isset($user['edge_followed_by']['count'])){
         continue;
